@@ -1,11 +1,13 @@
 
 var google = require('googleapis');
 var readline = require('readline');
+var jsonfile = require('jsonfile')
+var rimraf = require('rimraf');
 
 var secrets = require('./secrets.json');
 
 var OAuth2Client = google.auth.OAuth2;
-var plus = google.plus('v1');
+var cal = google.calendar('v3');
 
 // Client ID and client secret are available at
 // https://code.google.com/apis/console
@@ -25,7 +27,7 @@ function getAccessToken(oauth2Client, callback) {
   // generate consent page url
   var url = oauth2Client.generateAuthUrl({
     access_type: 'offline', // will return a refresh token
-    scope: 'https://www.googleapis.com/auth/plus.me' // can be a space-delimited string or an array of scopes
+    scope: 'https://www.google.com/calendar/feeds/' // can be a space-delimited string or an array of scopes
   });
 
   console.log('Visit the url: ', url);
@@ -42,12 +44,21 @@ function getAccessToken(oauth2Client, callback) {
 
 // retrieve an access token
 getAccessToken(oauth2Client, function() {
-  // retrieve user profile
-  plus.people.get({ userId: 'me', auth: oauth2Client }, function(err, profile) {
+    cal.events.list({calendarId: secrets.installed.calendar_id, auth: oauth2Client}, function(err, res) {
     if (err) {
-      console.log('An error occured', err);
+      console.error('****ERRRORRRRR****: ' + err);
       return;
     }
-    console.log(profile.displayName, ':', profile.tagline);
+
+    var file = './showSchedule.json'
+    rimraf(file, function(err) {
+      if (err) console.error('Error rimraffing: ' + err);
+
+      jsonfile.writeFile(file, res['items'], {spaces: 2}, function(err) {
+        if (err) console.error(err);
+        console.log('Succesful!');
+        return;
+      })
+    });
   });
 });

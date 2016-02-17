@@ -18,6 +18,8 @@
   "homepage": "https://github.com/spncrlkt/cal_scrape#readme",
   "dependencies": {
     "googleapis": "^2.1.7",
-    "readline": "^1.3.0"
+    "jsonfile": "^2.2.3",
+    "readline": "^1.3.0",
+    "rimraf": "^2.5.2"
   }
 }
