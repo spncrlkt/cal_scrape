@@ -1,0 +1,22 @@
+{
+  "name": "cal_scrape",
+  "version": "1.0.0",
+  "description": "calendar scraping 4 kffp",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spncrlkt/cal_scrape.git"
+  },
+  "author": "@spncrlkt",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/spncrlkt/cal_scrape/issues"
+  },
+  "homepage": "https://github.com/spncrlkt/cal_scrape#readme",
+  "dependencies": {
+    "googleapis": "^2.1.7"
+  }
+}
