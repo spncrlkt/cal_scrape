@@ -16,6 +16,17 @@ var timeSlots = [
   [],
 ];
 
+var dayOfWk = [
+  "SUN",
+  "MON",
+  "TUE",
+  "WED",
+  "THR",
+  "FRI",
+  "SAT",
+];
+
+// clean'n'sort calendar event data from showScehdule.json
 for (var idx = 0; idx < showSched.length; idx++) {
   var show = showSched[idx];
 
@@ -24,18 +35,32 @@ for (var idx = 0; idx < showSched.length; idx++) {
     dj: show.summary,
     description: show.description,
     startTimeRaw: show.start.dateTime,
-    endTimeRaw: show.end.dateTime,
   };
 
-  // var endMoment = moment(showClean.endTimeRaw);
-  var startMoment = moment(showClean.startTimeRaw);
+  // sort by show start time
+  var startMoment = moment(show.start.dateTime);
   var startDay = startMoment.day();
   var startHour = startMoment.hour();
 
+  var endMoment = moment(show.end.dateTime);
+  var endHour = endMoment.hour();
+
+  var startTimeFmtdStr = "STARTS: " +
+    dayOfWk[startDay] + " " +
+    startMoment.month() + "/" + startMoment.date() +  "/" + startMoment.year() + " @ " + 
+    startHour + "00 - " +
+    endHour + "00";
+
+
+  showClean.startDay = dayOfWk[startDay];
+  showClean.startHour = startHour;
+  showClean.endHour = endHour;
+  showClean.startTimeFmtdStr = startTimeFmtdStr;
   cleanSched.push(showClean);
 
   var timeSlot = Math.floor(startHour/2);
 
+  // push into timeSlots struct
   if (timeSlots[startDay][timeSlot]) {
     var currentShows = timeSlots[startDay][timeSlot];
     currentShows.push(showClean);
@@ -63,18 +88,48 @@ var timeSlotTd = [
 
 var styles = "<style> tr:nth-child(even) {background-color: #f2f2f2} .timeSlot {width: 72px} .show {width: 200px} </style>";
 
-// loop over 2-hr blocks grabbing days
+// loop over 2-hr blocks grabbing show data foreach day for to build <tr>s full of <td>s(nutz)
+// S M T W R F S <- days
+// 0 1 2 3 4 5 6 <- index
+// 7 8 9 A B C D ... etc
 var html = styles + "\n";
 html += "<table>\n";
 html += dayTr;
+
+var rawDblBkng = "";
+var refinedDblBkng = "";
+
 for (var block = 0; block < 12; block++) {
   html += "<tr>\n"
   html += "<td class='timeSlot'>" + timeSlotTd[block]+ "</td>\n";
   for (var day = 0; day < 7; day++) {
+    // check for double bookings
+    if (timeSlots[day][block].length > 1) {
+      rawDblBkng += '\n*************************';
+      rawDblBkng += 'double bucked muthafucka!';
+      rawDblBkng += '*************************';
+      rawDblBkng += JSON.stringify(timeSlots[day][block], null, 2);
+      rawDblBkng += '*************************\n';
+      if (timeSlots[day][block].length > 2) {
+        refinedDblBkng += "3+ shows in same time slot. That's probably bad\n";
+        refinedDblBkng += timeSlots[day][block][0].startTimeFmtdStr + "\n";
+        refinedDblBkng += timeSlots[day][block][1].startTimeFmtdStr + "\n";
+        refinedDblBkng += timeSlots[day][block][2].startTimeFmtdStr + "\n";
+      } else if (
+        (timeSlots[day][block][0].startHour != timeSlots[day][block][1].endHour) &&
+        (timeSlots[day][block][0].endHour != timeSlots[day][block][1].startHour)
+      ) {
+        refinedDblBkng += "Looks like an overlap here:\n";
+        refinedDblBkng += ifExistsElseTBA(timeSlots[day][block][0].showName) + " w/ " +
+          cleanDJName(ifExistsElseTBA(timeSlots[day][block][0].dj)) + " " +  timeSlots[day][block][0].startTimeFmtdStr + "\n";
+        refinedDblBkng += ifExistsElseTBA(timeSlots[day][block][1].showName) + " w/ " +
+          cleanDJName(ifExistsElseTBA(timeSlots[day][block][1].dj)) + " " +  timeSlots[day][block][1].startTimeFmtdStr + "\n";
+      }
+    }
     html += "<td class='show'>";
-    var showName = timeSlots[day][block][0].showName ? timeSlots[day][block][0].showName : 'TBA';
+    var showName = ifExistsElseTBA(timeSlots[day][block][0].showName);
     html += "<div class='showName'>" + escapeHtml(showName) + "</div>";
-    var dj = timeSlots[day][block][0].dj ? cleanDJName(timeSlots[day][block][0].dj) : 'TBA';
+    var dj = cleanDJName(ifExistsElseTBA(timeSlots[day][block][0].dj));
     html += "<div class='dj'>" + escapeHtml(dj) + "</div>";
     html += "</td>\n";
   }
@@ -82,12 +137,17 @@ for (var block = 0; block < 12; block++) {
 }
 html += "</table>\n";
 
+function ifExistsElseTBA(val) {
+  return val ? val : 'TBA';
+}
 
-console.log(html);
+
 fs.writeFile('table.html', html, function(err) {
   if (err) throw err;
   console.log('IM DONE U MFER');
 });
+
+console.log(refinedDblBkng);
 
 function cleanDJName(djName) {
   var regExp = /\(([^)]+)\)/;
@@ -122,43 +182,3 @@ function escapeHtml (string) {
     }
   });
 }
-
-
-/*
-console.log(showSched.length);
-console.log(cleanSched.length);
-*/
-
-
-/*
-var rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
-
-rl.question('SUP:', function(code) {
-  console.log(code);
-});
-*/
-
-/*
-getAccessToken(oauth2Client, function() {
-    cal.events.list({calendarId: secrets.installed.calendar_id, auth: oauth2Client}, function(err, res) {
-    if (err) {
-      console.error('****ERRRORRRRR****: ' + err);
-      return;
-    }
-
-    var file = './showSchedule.json'
-    rimraf(file, function(err) {
-      if (err) console.error('Error rimraffing: ' + err);
-
-      jsonfile.writeFile(file, res['items'], {spaces: 2}, function(err) {
-        if (err) console.error(err);
-        console.log('Succesful!');
-        return;
-      })
-    });
-  });
-});
-*/
