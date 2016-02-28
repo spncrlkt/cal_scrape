@@ -2,6 +2,7 @@ var readline = require('readline');
 var jsonfile = require('jsonfile')
 var rimraf = require('rimraf');
 var moment = require('moment');
+var fs = require('fs');
 
 var showSched = require('./showSchedule.json');
 var cleanSched = [];
@@ -36,7 +37,6 @@ for (var idx = 0; idx < showSched.length; idx++) {
   var timeSlot = Math.floor(startHour/2);
 
   if (timeSlots[startDay][timeSlot]) {
-    if (startDay == 5) {debugger;}
     var currentShows = timeSlots[startDay][timeSlot];
     currentShows.push(showClean);
     timeSlots[startDay][timeSlot] = currentShows;
@@ -45,7 +45,69 @@ for (var idx = 0; idx < showSched.length; idx++) {
   }
 }
 
-debugger;
+var dayTr = "<tr><td></td><td>SUN</td><td>MON</td><td>TUE</td><td>WED</td><td>THU</td><td>FRI</td><td>SAT</td></tr>\n";
+var timeSlotTd = [
+  "12A-2A",
+  "2A-4A",
+  "4A-6A",
+  "6A-8A",
+  "8A-10A",
+  "10A-12P",
+  "12P-2P",
+  "2P-4P",
+  "4P-6P",
+  "6P-8P",
+  "8P-10P",
+  "10P-12A",
+];
+
+// loop over 2-hr blocks grabbing days
+var html = "\n";
+html += "<table>\n";
+html += dayTr;
+for (var block = 0; block < 12; block++) {
+  html += "<tr>\n"
+  html += "<td>" + timeSlotTd[block]+ "</td>\n";
+  for (var day = 0; day < 7; day++) {
+    html += "<td>";
+    var showName = timeSlots[day][block][0].showName ? timeSlots[day][block][0].showName : 'TBA';
+    html += escapeHtml(showName);
+    html += "</td>\n";
+  }
+  html += "</tr>\n"
+}
+html += "</table>\n";
+
+
+console.log(html);
+fs.writeFile('table.html', html, function(err) {
+  if (err) throw err;
+  console.log('IM DONE U MFER');
+});
+
+var entityMap = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;',
+  '/': '&#x2F;',
+  '`': '&#x60;',
+  '=': '&#x3D;'
+};
+
+function escapeHtml (string) {
+  var mystr = string;
+  return String(string).replace(/[&<>"'`=\/]/g, function fromEntityMap (s) {
+    try {
+      return entityMap[s];
+    } catch (err) {
+      return '';
+      // whatchu gunna do abt it
+    }
+  });
+}
+
 
 /*
 console.log(showSched.length);
