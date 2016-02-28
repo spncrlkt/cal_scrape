@@ -45,7 +45,7 @@ for (var idx = 0; idx < showSched.length; idx++) {
   }
 }
 
-var dayTr = "<tr><td></td><td>SUN</td><td>MON</td><td>TUE</td><td>WED</td><td>THU</td><td>FRI</td><td>SAT</td></tr>\n";
+var dayTr = "<th><td>SUN</td><td>MON</td><td>TUE</td><td>WED</td><td>THU</td><td>FRI</td><td>SAT</td></th>\n";
 var timeSlotTd = [
   "12A-2A",
   "2A-4A",
@@ -61,17 +61,21 @@ var timeSlotTd = [
   "10P-12A",
 ];
 
+var styles = "<style> tr:nth-child(even) {background-color: #f2f2f2} .timeSlot {width: 72px} .show {width: 200px} </style>";
+
 // loop over 2-hr blocks grabbing days
-var html = "\n";
+var html = styles + "\n";
 html += "<table>\n";
 html += dayTr;
 for (var block = 0; block < 12; block++) {
   html += "<tr>\n"
-  html += "<td>" + timeSlotTd[block]+ "</td>\n";
+  html += "<td class='timeSlot'>" + timeSlotTd[block]+ "</td>\n";
   for (var day = 0; day < 7; day++) {
-    html += "<td>";
+    html += "<td class='show'>";
     var showName = timeSlots[day][block][0].showName ? timeSlots[day][block][0].showName : 'TBA';
-    html += escapeHtml(showName);
+    html += "<div class='showName'>" + escapeHtml(showName) + "</div>";
+    var dj = timeSlots[day][block][0].dj ? cleanDJName(timeSlots[day][block][0].dj) : 'TBA';
+    html += "<div class='dj'>" + escapeHtml(dj) + "</div>";
     html += "</td>\n";
   }
   html += "</tr>\n"
@@ -84,6 +88,17 @@ fs.writeFile('table.html', html, function(err) {
   if (err) throw err;
   console.log('IM DONE U MFER');
 });
+
+function cleanDJName(djName) {
+  var regExp = /\(([^)]+)\)/;
+  var matches = regExp.exec(djName);
+
+  if (matches && matches[1]) {
+    return matches[1];
+  } else {
+    return djName;
+  }
+}
 
 var entityMap = {
   '&': '&amp;',
