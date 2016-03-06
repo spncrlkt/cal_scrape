@@ -43,11 +43,14 @@ for (var idx = 0; idx < showSched.length; idx++) {
   var startHour = startMoment.hour();
 
   var endMoment = moment(show.end.dateTime);
+  var endDay = endMoment.day();
   var endHour = endMoment.hour();
 
   var startTimeFmtdStr = "STARTS: " +
     dayOfWk[startDay] + " " +
-    startMoment.month() + "/" + startMoment.date() +  "/" + startMoment.year() + " @ " + 
+    startMoment.month() + "/" + startMoment.date() +  "/" + startMoment.year() + " - " + 
+    dayOfWk[endDay] + " " +
+    endMoment.month() + "/" + endMoment.date() +  "/" + endMoment.year() + " @ " + 
     startHour + "00 - " +
     endHour + "00";
 
@@ -111,9 +114,8 @@ for (var block = 0; block < 12; block++) {
       rawDblBkng += JSON.stringify(timeSlots[day][block], null, 2);
       rawDblBkng += '*************************\n';
       if (timeSlots[day][block].length > 2) {
-        refinedDblBkng += "3+ shows in same time slot. That's probably bad\n";
+        refinedDblBkng += "Looks like an overlap here:\n";
         for (var tripleBkngIdx = 0; tripleBkngIdx < timeSlots[day][block].length; tripleBkngIdx++) {
-          refinedDblBkng += timeSlots[day][block][tripleBkngIdx].startTimeFmtdStr + "\n";
           refinedDblBkng += ifExistsElseTBA(timeSlots[day][block][tripleBkngIdx].showName) + " w/ " +
             cleanDJName(ifExistsElseTBA(timeSlots[day][block][tripleBkngIdx].dj)) + " " +  timeSlots[day][block][tripleBkngIdx].startTimeFmtdStr + "\n";
         }

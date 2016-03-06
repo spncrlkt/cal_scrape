@@ -44,7 +44,17 @@ function getAccessToken(oauth2Client, callback) {
 
 // retrieve an access token
 getAccessToken(oauth2Client, function() {
-    cal.events.list({calendarId: secrets.installed.calendar_id, auth: oauth2Client}, function(err, res) {
+  // set start time and end time to only get one week's worth of data
+  var timeMin = "2016-03-06T00:00:00-07:00";
+  var timeMax = "2016-03-13T00:00:00-07:00";
+
+  var eventListCfg = {
+    calendarId: secrets.installed.calendar_id,
+    auth: oauth2Client,
+    timeMin: timeMin,
+    timeMax: timeMax,
+  };
+  cal.events.list(eventListCfg, function(err, res) {
     if (err) {
       console.error('****ERRRORRRRR****: ' + err);
       return;
