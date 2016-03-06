@@ -112,9 +112,11 @@ for (var block = 0; block < 12; block++) {
       rawDblBkng += '*************************\n';
       if (timeSlots[day][block].length > 2) {
         refinedDblBkng += "3+ shows in same time slot. That's probably bad\n";
-        refinedDblBkng += timeSlots[day][block][0].startTimeFmtdStr + "\n";
-        refinedDblBkng += timeSlots[day][block][1].startTimeFmtdStr + "\n";
-        refinedDblBkng += timeSlots[day][block][2].startTimeFmtdStr + "\n";
+        for (var tripleBkngIdx = 0; tripleBkngIdx < timeSlots[day][block].length; tripleBkngIdx++) {
+          refinedDblBkng += timeSlots[day][block][tripleBkngIdx].startTimeFmtdStr + "\n";
+          refinedDblBkng += ifExistsElseTBA(timeSlots[day][block][tripleBkngIdx].showName) + " w/ " +
+            cleanDJName(ifExistsElseTBA(timeSlots[day][block][tripleBkngIdx].dj)) + " " +  timeSlots[day][block][tripleBkngIdx].startTimeFmtdStr + "\n";
+        }
       } else if (
         (timeSlots[day][block][0].startHour != timeSlots[day][block][1].endHour) &&
         (timeSlots[day][block][0].endHour != timeSlots[day][block][1].startHour)
