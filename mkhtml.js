@@ -30,8 +30,15 @@ var dayOfWk = [
 for (var idx = 0; idx < showSched.length; idx++) {
   var show = showSched[idx];
 
+  // strip show id from showname
+  if (show.location) {
+    var showName = show.location.replace(/ *\[.+ */g, "").trim()
+  } else {
+    var showName = "TBA";
+  }
+
   var showClean = {
-    showName: show.location,
+    showName: showName,
     dj: show.summary,
     description: show.description,
     startTimeRaw: show.start.dateTime,
