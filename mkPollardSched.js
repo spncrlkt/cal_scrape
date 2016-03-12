@@ -84,8 +84,9 @@ for (var idx = 0; idx < showSched.length; idx++) {
 
 fs.writeFile('pollardSched.json', JSON.stringify(cleanSched, null, 2), function(err) {
   if (err) throw err;
+  fs.writeFile('pollardSchedBadShows.json', JSON.stringify(noShowID, null, 2), function(err) {
+    if (err) throw err;
+      process.exit();
+  });
 });
 
-fs.writeFile('pollardSchedBadShows.json', JSON.stringify(noShowID, null, 2), function(err) {
-  if (err) throw err;
-});
