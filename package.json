@@ -2,7 +2,7 @@
   "name": "cal_scrape",
   "version": "1.0.0",
   "description": "calendar scraping 4 kffp",
-  "main": "index.js",
+  "main": "scrapeSchedGoogCal.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
