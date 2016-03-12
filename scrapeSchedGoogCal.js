@@ -44,9 +44,14 @@ function getAccessToken(oauth2Client, callback) {
 
 // retrieve an access token
 getAccessToken(oauth2Client, function() {
+  //******************************
+  //  THIS DATE/TIME WILL CHANGE EVERY
+  //  TIME WE GET A NEW SCHEDULE
+  //******************************
   // set start time and end time to only get one week's worth of data
   var timeMin = "2016-03-06T00:00:00-07:00";
   var timeMax = "2016-03-13T00:00:00-07:00";
+
 
   var eventListCfg = {
     calendarId: secrets.installed.calendar_id,
@@ -67,7 +72,7 @@ getAccessToken(oauth2Client, function() {
       jsonfile.writeFile(file, res['items'], {spaces: 2}, function(err) {
         if (err) console.error(err);
         console.log('Succesful!');
-        return;
+        process.exit();
       })
     });
   });

@@ -6,7 +6,7 @@ kffp google calendar scrape
 - `cp secrets.json.template secrets.json` && fill in w/ appropriate data
 
 # RUN
-- `node scrapeSchedGoogCal.js` => showSchedule.json
+- `node scrapeSchedGoogCal.js` && visit the URL && select an acct w/ access to read the Programming Schedule Calendar && enter the code => showSchedule.json
 - `node mkTableHTML.js` => table.html
 - `node mkDailyHTML.js` => daily.html
 - `node mkPollardSched.js` => pollardSched.json && pollardSchedBadShows.json
