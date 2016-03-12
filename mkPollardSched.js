@@ -74,8 +74,9 @@ for (var idx = 0; idx < showSched.length; idx++) {
 
 
   showClean.showID = showID;
-  showClean.startDay = dayOfWk[startDay];
+  showClean.startDay = startDay;
   showClean.startHour = startHour;
+  showClean.endDay = endDay;
   showClean.endHour = endHour;
   showClean.startTimeFmtdStr = startTimeFmtdStr;
   cleanSched.push(showClean);
