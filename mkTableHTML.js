@@ -155,10 +155,14 @@ function ifExistsElseTBA(val) {
 
 fs.writeFile('table.html', html, function(err) {
   if (err) throw err;
-  console.log('IM DONE U MFER');
+  console.log(refinedDblBkng);
+  fs.writeFile('table.log', refinedDblBking, function(err) {
+    if (err) throw err;
+    console.log('IM DONE U MFER');
+    process.exit();
+  });
 });
 
-console.log(refinedDblBkng);
 
 function cleanDJName(djName) {
   var regExp = /\(([^)]+)\)/;
