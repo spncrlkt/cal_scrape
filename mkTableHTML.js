@@ -156,7 +156,7 @@ function ifExistsElseTBA(val) {
 fs.writeFile('table.html', html, function(err) {
   if (err) throw err;
   console.log(refinedDblBkng);
-  fs.writeFile('table.log', refinedDblBking, function(err) {
+  fs.writeFile('table.log', refinedDblBkng, function(err) {
     if (err) throw err;
     console.log('IM DONE U MFER');
     process.exit();
