@@ -52,15 +52,12 @@ for (var idx = 0; idx < showSched.length; idx++) {
     startHour + "00 - " +
     endHour + "00";
 
-  // get show id from show.location
+  // get show id from show.summary
   var showID = "TBA";
-  if (show.location) {
-    var showIDMatches = show.location.match(/ *\[.+ */g)
-    if (showIDMatches && showIDMatches.length > 0) {
-      // get show id match
-      showID = show.location.match(/ *\[.+ */g)[0];
-    }
+  if (show.summary) {
+    showID = getShowID(show.summary);
   }
+
   if (showID == 'TBA') {
     if (TEST_ENV) {
       // to build a fake testing schedule
@@ -79,6 +76,7 @@ for (var idx = 0; idx < showSched.length; idx++) {
   showClean.endDay = endDay;
   showClean.endHour = endHour;
   showClean.startTimeFmtdStr = startTimeFmtdStr;
+  showClean.djEmail = getCleanDJEmail(show.attendees);
   cleanSched.push(showClean);
 }
 
@@ -89,4 +87,21 @@ fs.writeFile('pollardSched.json', JSON.stringify(cleanSched, null, 2), function(
       process.exit();
   });
 });
+
+function getCleanDJEmail(attendees) {
+  if (attendees && attendees.length > 0) {
+    return attendees[0].email;
+  } else {
+    return "NO DJ EMAIL FOUND";
+  }
+}
+
+function getShowID(summary) {
+  var showID = "TBA";
+  var matches = summary.match(/\[.*\]/);
+  if (matches) {
+    showID = matches[0];
+  }
+  return showID;
+}
 
